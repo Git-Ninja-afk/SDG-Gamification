@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: gamify_sdg_postgres
+    environment:
+      POSTGRES_USER: gamify
+      POSTGRES_PASSWORD: gamify_password
+      POSTGRES_DB: gamify_sdg
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gamify_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: gamify_sdg_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - gamify_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gamify_sdg_backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://gamify:gamify_password@postgres:5432/gamify_sdg
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: ${SECRET_KEY}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+    networks:
+      - gamify_network
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: gamify_sdg_web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://backend:8000/api/v1
+      CI: "false"
+      WDS_SOCKET_HOST: localhost
+      WDS_SOCKET_PORT: 3000
+    stdin_open: true
+    tty: true
+    networks:
+      - gamify_network
+
+networks:
+  gamify_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

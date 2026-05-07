@@ -9,7 +9,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 # Root Level Project Configuration
 
-This is the Gamify SDG Platform - a comprehensive hackathon project that gamifies UN Sustainable Development Goals.
+This is the Gamify SDG Platform - a comprehensive project that gamifies UN Sustainable Development Goals.
 
 ## 📦 Project Structure
 

@@ -128,5 +128,3 @@ For questions or issues, refer to individual component READMEs:
 
 ---
 
-**Built for Thapar University Hackathon 🎓**
-**Making SDGs engaging and rewarding! 🌍**
